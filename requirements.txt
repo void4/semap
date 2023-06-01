@@ -1,2 +1,12 @@
 bs4
 werkzeug
+umap-learn
+pandas
+matplotlib
+datashader
+bokeh
+holoviews
+scikit-image
+colorcet
+scipy
+numpy
