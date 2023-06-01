@@ -12,7 +12,7 @@ EDGEFILE = "edges.txt"
 # LargeVis Output
 POSITIONFILE = "positions.txt"
 
-REGENERATE = False
+REGENERATE = True
 
 TAGID = 10000000000
 tagidcache = {}
@@ -26,7 +26,6 @@ def tagid(tag):
 if not os.path.exists(POSITIONFILE) or REGENERATE:
 	edges = open(EDGEFILE, "w+")
 
-	"""
 	with open(LINKFILE) as f:
 		xml = BS(f.read(), "lxml")
 		
@@ -40,7 +39,7 @@ if not os.path.exists(POSITIONFILE) or REGENERATE:
 		weight = 1
 
 		edges.write(f"{postid} {related} {weight}\n")
-	"""
+		# XXX also other way around?
 
 	with open(POSTFILE) as f:
 		xml = BS(f.read(), "lxml")
@@ -136,13 +135,13 @@ for row in xml.find_all("row"):
 	
 	title = title.replace('"', "")
 	
-	f.write(f"\t[{pid}, {x}, {y}, {views}, \"{escape(title)}\", {answered}, false],\n")
+	f.write(f"\t[{pid}, {x}, {y}, {views}, \"{escape(title)}\", {answered}, false, {score}],\n")
 
 for tag, tagid in tagidcache.items():
 	print(tag, tagid)
 	x, y = positions[tagid]
 	views = 1000
-	f.write(f"\t[{tagid}, {x}, {y}, {views}, \"{escape(tag)}\", true, true],\n")
+	f.write(f"\t[{tagid}, {x}, {y}, {views}, \"{escape(tag)}\", true, true, 0],\n")
 		
 f.write("\n]")
 f.close()
