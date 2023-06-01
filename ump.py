@@ -6,6 +6,7 @@ from collections import defaultdict
 from werkzeug.utils import secure_filename
 from bs4 import BeautifulSoup as BS
 import numpy as np
+from aabbtree import AABB, AABBTree
 
 
 BREAKPOINT = None
@@ -134,10 +135,11 @@ lines = ""
 tagposx = defaultdict(list)
 tagposy = defaultdict(list)
 
-coords = {}
 def roffset(scale=10):
 	# TODO use fixed seed
 	return (random()-0.5)*scale
+
+tree = AABBTree()
 
 for r, row in enumerate(xml.find_all("row")):
 	if BREAKPOINT and r >= BREAKPOINT:
@@ -165,16 +167,27 @@ for r, row in enumerate(xml.find_all("row")):
 	
 	x = int(x)
 	y = int(y)
-
 	
-	xy = (x,y)
-	if xy in coords:
+	# TODO scale with score
+	xscale = 8
+	yscale = 12
+	
+	width = len(title)*xscale
+	height = yscale
+	
+	for i in range(10):
+		aabb = AABB([(x,x+width), (y, y+height)])
+		
+		if not tree.does_overlap(aabb):
+			tree.add(aabb)
+			break
+
 		x += roffset(10)
 		y += roffset(40)
+	else:
+		print("failed to find")
 	
 	xy = (int(x), int(y))
-	
-	coords[xy] = True
 	
 	#x = max(0, min(x, 1000))
 	#y = max(0, min(y, 1000))
